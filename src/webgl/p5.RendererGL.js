@@ -1064,9 +1064,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   filter(...args) {
-    let pg = this.getFilterGraphicsLayer();
+    if (!this.filterGraphicsLayer) {
+      this.filterGraphicsLayer = this._pInst.createFramebuffer();
+    }
+    let pg = this.filterGraphicsLayer;
 
-    // use internal shader for filter constants BLUR, INVERT, etc
     let filterParameter = undefined;
     let operation = undefined;
     if (typeof args[0] === 'string') {
@@ -1078,10 +1080,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       };
       let useDefaultParam = operation in defaults && args[1] === undefined;
       filterParameter = useDefaultParam ? defaults[operation] : args[1];
-
-      // Create and store shader for constants once on initial filter call.
-      // Need to store multiple in case user calls different filters,
-      // eg. filter(BLUR) then filter(GRAY)
       if (!(operation in this.defaultFilterShaders)) {
         this.defaultFilterShaders[operation] = new p5.Shader(
           pg._renderer,
@@ -1090,80 +1088,36 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
         );
       }
       this.filterShader = this.defaultFilterShaders[operation];
-
     }
-    // use custom user-supplied shader
     else {
       this.filterShader = args[0];
     }
-
-    pg.clear(); // prevent undesirable feedback effects accumulating secretly
+    // pg.clear(); // prevent undesirable feedback effects accumulating secretly
 
     let pd = this._pInst.pixelDensity();
     let texelSize = [1 / (this.width * pd), 1 / (this.height * pd)];
 
     // apply blur shader with multiple passes
     if (operation === constants.BLUR) {
-
-      const tmp = this.getFilterGraphicsLayerTemp();
-      tmp.clear(); // prevent feedback effects here too
-
-      // setup
-      this._pInst.push();
-      this._pInst.noStroke();
-
-      // draw main to temp buffer
-      tmp.image(this, -this.width / 2, -this.height / 2);
-
-      pg.shader(this.filterShader);
-      this.filterShader.setUniform('texelSize', texelSize);
-      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
-      this.filterShader.setUniform('radius', Math.max(1, filterParameter));
-
-      // horiz pass
-      this.filterShader.setUniform('direction', [1, 0]);
-      this.filterShader.setUniform('tex0', tmp);
-      pg.clear();
-      pg.rect(-this.width / 2, -this.height / 2, this.width, this.height);
-
-      // read back to temp buffer
-      tmp.clear();
-      tmp.image(pg, -this.width / 2, -this.height / 2);
-
-      // vert pass
-      this.filterShader.setUniform('direction', [0, 1]);
-      this.filterShader.setUniform('tex0', tmp);
-      pg.clear();
-      pg.rect(-this.width / 2, -this.height / 2, this.width, this.height);
-
-      this._pInst.pop();
+      // Removed blur branch.
     }
     // every other non-blur shader uses single pass
     else {
-      pg.shader(this.filterShader);
-      this.filterShader.setUniform('tex0', this);
-      this.filterShader.setUniform('texelSize', texelSize);
-      this.filterShader.setUniform('canvasSize', [this.width, this.height]);
-      // filterParameter uniform only used for POSTERIZE, and THRESHOLD
-      // but shouldn't hurt to always set
-      this.filterShader.setUniform('filterParameter', filterParameter);
-      pg.rect(-this.width / 2, -this.height / 2, this.width, this.height);
-
+      pg.draw(() => {
+        shader(this.filterShader);
+        this.filterShader.setUniform('tex0', this);
+        this.filterShader.setUniform('texelSize', texelSize);
+        this.filterShader.setUniform('canvasSize', [this.width, this.height]);
+        this.filterShader.setUniform('filterParameter', filterParameter);
+        console.log(this.activeFramebuffers.slice());
+        rect(-this.width / 2, -this.height / 2, this.width, this.height);
+      });
     }
     // draw pg contents onto main renderer
     this._pInst.push();
-    pg._pInst.resetMatrix();
-    this._pInst.noStroke();
-    pg._pInst.imageMode(constants.CORNER);
-    pg._pInst.blendMode(constants.BLEND);
-    this.clear();
-    this._pInst.push();
-    this.filterCamera._resize();
-    this._pInst.setCamera(this.filterCamera);
-    this._pInst.resetMatrix();
+    // Also removed filterCamera for now.
     this._pInst.image(pg, -this.width / 2, -this.height / 2,
       this.width, this.height);
-    this._pInst.pop();
     this._pInst.pop();
   }
 
