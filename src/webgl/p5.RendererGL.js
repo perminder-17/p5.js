@@ -1082,7 +1082,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
       filterParameter = useDefaultParam ? defaults[operation] : args[1];
       if (!(operation in this.defaultFilterShaders)) {
         this.defaultFilterShaders[operation] = new p5.Shader(
-          pg._renderer,
+          this,
           filterShaderVert,
           filterShaderFrags[operation]
         );
