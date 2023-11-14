@@ -1092,10 +1092,9 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     else {
       this.filterShader = args[0];
     }
-    // pg.clear(); // prevent undesirable feedback effects accumulating secretly
-
-    let pd = this._pInst.pixelDensity();
-    let texelSize = [1 / (this.width * pd), 1 / (this.height * pd)];
+    const target = this.activeFramebuffer() || this;
+    // TODO: resize pg and change its density here if it doesn't match the target
+    pg.draw(() => this._pInst.clear()); // prevent undesirable feedback effects accumulating secretly
 
     // apply blur shader with multiple passes
     if (operation === constants.BLUR) {
@@ -1103,23 +1102,37 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     // every other non-blur shader uses single pass
     else {
+      let texelSize = [
+        1 / (target.width * target.pixelDensity()),
+        1 / (target.height * target.pixelDensity())
+      ];
       pg.draw(() => {
-        shader(this.filterShader);
-        this.filterShader.setUniform('tex0', this);
+        this._pInst.noStroke();
+        this._pInst.shader(this.filterShader);
+        this.filterShader.setUniform('tex0', target);
         this.filterShader.setUniform('texelSize', texelSize);
-        this.filterShader.setUniform('canvasSize', [this.width, this.height]);
+        this.filterShader.setUniform('canvasSize', [target.width, target.height]);
         this.filterShader.setUniform('filterParameter', filterParameter);
-        console.log(this.activeFramebuffers.slice());
-        rect(-this.width / 2, -this.height / 2, this.width, this.height);
+        this._pInst.plane(target.width, target.height);
       });
     }
     // draw pg contents onto main renderer
     this._pInst.push();
+    this._pInst.clear();
     this._pInst.resetMatrix();
     // Also removed filterCamera for now.
-    this._pInst.image(pg, -this.width / 2, -this.height / 2,
-      this.width, this.height);
+    this._pInst.imageMode(constants.CENTER);
+    this._pInst.image(pg, 0, 0);
     this._pInst.pop();
+  }
+
+  // Pass this off to the host instance so that we can treat a renderer and a
+  // framebuffer the same in filter()
+  pixelDensity(newDensity) {
+    if (newDensity) {
+      return this._pInst.pixelDensity(newDensity);
+    }
+    return this._pInst.pixelDensity();
   }
 
   blendMode(mode) {
