@@ -1115,6 +1115,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     // draw pg contents onto main renderer
     this._pInst.push();
+    this._pInst.resetMatrix();
     // Also removed filterCamera for now.
     this._pInst.image(pg, -this.width / 2, -this.height / 2,
       this.width, this.height);
