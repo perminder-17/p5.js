@@ -578,6 +578,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.userFillShader = undefined;
     this.userStrokeShader = undefined;
     this.userPointShader = undefined;
+    this.userImageShader = undefined;
 
     // Default drawing is done in Retained Mode
     // Geometry and Material hashes stored here
@@ -630,7 +631,11 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
           new p5.RenderBuffer(3, 'lineTangentsOut', 'lineTangentsOutBuffer', 'aTangentOut', this),
           new p5.RenderBuffer(1, 'lineSides', 'lineSidesBuffer', 'aSide', this)
         ],
-        point: this.GL.createBuffer()
+        point: this.GL.createBuffer(),
+        image: [
+          new p5.RenderBuffer(3, 'imageVertices', 'imageVertexBuffer', 'aPosition', this, this._vToNArray),
+          new p5.RenderBuffer(2, 'imageUVs', 'imageUVBuffer', 'aTexCoord', this, this._flatten)
+        ]
       }
     };
 
@@ -1636,6 +1641,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     properties.userFillShader = this.userFillShader;
     properties.userStrokeShader = this.userStrokeShader;
+    properties.userImageShader = this.userImageShader;
     properties.userPointShader = this.userPointShader;
 
     properties.pointSize = this.pointSize;
@@ -1710,10 +1716,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _getImmediateStrokeShader() {
     // select the stroke shader to use
     const stroke = this.userStrokeShader;
-    if (!stroke || !stroke.isStrokeShader()) {
-      return this._getLineShader();
+    if (stroke) {
+      return stroke;
     }
-    return stroke;
+    return this._getLineShader();
   }
 
 
@@ -1769,20 +1775,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     if (this._useNormalMaterial) {
       return this._getNormalShader();
     }
-
+    // Check if the fill shader is a texture shader
     const fill = this.userFillShader;
-    if (this._enableLighting) {
-      if (!fill || !fill.isLightShader()) {
-        return this._getLightShader();
-      }
-    } else if (this._tex) {
-      if (!fill || !fill.isTextureShader()) {
-        return this._getLightShader();
-      }
-    } else if (!fill /* || !fill.isColorShader()*/) {
-      return this._getColorShader();
+    if(fill && !fill.isTextureShader()){
+      return fill;
     }
-    return fill;
+    // Return the appropriate light shader if lighting is enabled or it's a texture shader
+    if (this._enableLighting || this._tex) {
+      return this._getLightShader();
+    }
+    // Default to the color shader
+    return this._getColorShader();
   }
 
   _getImmediatePointShader() {
@@ -1942,6 +1945,17 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._defaultColorShader;
   }
 
+  _getImmediateImageShader() {
+    const imageShader = this.userImageShader;
+    if (this._tex) {
+      if (!imageShader || !imageShader.isTextureShader()) {
+        return this._getLightShader();
+      }
+    }
+    return imageShader ;
+  }
+
+
   /**
    * TODO(dave): un-private this when there is a way to actually override the
    * shader used for points
@@ -2050,6 +2064,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     return this._defaultFontShader;
   }
+
 
   _webGL2CompatibilityPrefix(
     shaderType,
