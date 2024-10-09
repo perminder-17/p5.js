@@ -1774,7 +1774,7 @@ p5.prototype.baseColorShader = function() {
  *
  * function draw() {
  *   background(255);
- *   shader(myShader);
+ *   strokeShader(myShader);
  *   strokeWeight(30);
  *   line(
  *     -width/3,
@@ -1817,7 +1817,7 @@ p5.prototype.baseColorShader = function() {
  *
  * function draw() {
  *   background(255);
- *   shader(myShader);
+ *   strokeShader(myShader);
  *   myShader.setUniform('time', millis());
  *   strokeWeight(10);
  *   beginShape();
@@ -1858,7 +1858,7 @@ p5.prototype.baseColorShader = function() {
  *
  * function draw() {
  *   background(255);
- *   shader(myShader);
+ *   strokeShader(myShader);
  *   strokeWeight(10);
  *   beginShape();
  *   for (let i = 0; i <= 50; i++) {
