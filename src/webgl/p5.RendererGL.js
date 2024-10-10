@@ -1746,25 +1746,27 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    * selects which fill shader should be used based on renderer state,
    * for use with begin/endShape and immediate vertex mode.
    */
+
   _getImmediateFillShader() {
     const fill = this.userFillShader;
-    if (this._useNormalMaterial) {
-      if (!fill || !fill.isNormalShader()) {
-        return this._getNormalShader();
-      }
+    if (fill) {
+      return fill;
     }
-    if (this._enableLighting) {
-      if (!fill || !fill.isLightShader()) {
+    if (this._tex) {
+      return this._getTextureShader();
+    }
+    return this._getImmediateModeShader();
+  }
+
+
+  _getImmediateImageShader() {
+    const imageShader = this.userImageShader;
+    if (this._tex) {
+      if (!imageShader) {
         return this._getLightShader();
       }
-    } else if (this._tex) {
-      if (!fill || !fill.isTextureShader()) {
-        return this._getLightShader();
-      }
-    } else if (!fill /*|| !fill.isColorShader()*/) {
-      return this._getImmediateModeShader();
     }
-    return fill;
+    return imageShader ;
   }
 
   /*
@@ -1787,6 +1789,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     // Default to the color shader
     return this._getColorShader();
   }
+
 
   _getImmediatePointShader() {
     // select the point shader to use
@@ -1943,16 +1946,6 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
 
     return this._defaultColorShader;
-  }
-
-  _getImmediateImageShader() {
-    const imageShader = this.userImageShader;
-    if (this._tex) {
-      if (!imageShader || !imageShader.isTextureShader()) {
-        return this._getLightShader();
-      }
-    }
-    return imageShader ;
   }
 
 
