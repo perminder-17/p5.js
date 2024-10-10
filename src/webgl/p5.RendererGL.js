@@ -1748,26 +1748,38 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    */
 
   _getImmediateFillShader() {
-    const fill = this.userFillShader;
-    if (fill) {
-      return fill;
+    // Retrieve the user-defined fill shader if available
+    const fillShader = this.userFillShader;
+
+    // If user-defined fill shader is available, return it
+    if (fillShader) {
+      return fillShader;
     }
-    if (this._tex) {
-      return this._getTextureShader();
+
+    // Fallback to default shaders based on lighting or simple color
+    if (this._enableLighting) {
+      return this._getLightShader();
     }
+
+    // Default to the immediate mode shader
     return this._getImmediateModeShader();
   }
 
 
+
   _getImmediateImageShader() {
+    // Retrieve the user-defined image shader if available
     const imageShader = this.userImageShader;
-    if (this._tex) {
-      if (!imageShader) {
-        return this._getLightShader();
-      }
+
+    // If user-defined image shader is available, return it
+    if (imageShader) {
+      return imageShader;
     }
-    return imageShader ;
+
+    // Fallback to the default shader for image rendering
+    return this._getImmediateModeShader();
   }
+
 
   /*
    * selects which fill shader should be used based on renderer state
