@@ -1745,9 +1745,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
    */
   _getFillShader() {
     if (this._drawingImage) {
-      if(this.userImageShader){
-        return this.userImageShader;
-      }
+      return this.userImageShader;
     }
     else if (this.userFillShader) {
       return this.userFillShader;
