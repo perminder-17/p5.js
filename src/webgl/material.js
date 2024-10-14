@@ -899,7 +899,6 @@ p5.prototype.shader = function (s) {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * //  Animated stroke shader with time-based color change
  * let animatedStrokeShader;
  *
  * let vertSrc = `
@@ -980,13 +979,16 @@ p5.prototype.shader = function (s) {
  *   animatedStrokeShader = createShader(vertSrc, fragSrc);
  *   strokeShader(animatedStrokeShader);
  *   strokeWeight(4);
+ *
+ *   describe('A hollow cube rotating continuously with its stroke colors changing dynamically over time against a static gray background.');
  * }
  *
  * function draw() {
  *   animatedStrokeShader.setUniform('uTime', millis() / 1000.0);
- *   background(50);
+ *   background(250);
  *   rotateY(frameCount * 0.02);
  *   noFill();
+ *   orbitControl();
  *   box(50);
  * }
  * </code>
