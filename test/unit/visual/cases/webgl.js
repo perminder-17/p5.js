@@ -160,7 +160,7 @@ visualSuite('WebGL', function() {
 
     visualTest('StrokeShader', (p5, screenshot) => {
       return new Promise(resolve => {
-        p5.createCanvas(200, 200, p5.WEBGL);
+        p5.createCanvas(50, 50, p5.WEBGL);
         // Create a stroke shader with a fading effect based on distance
         const strokeshader = p5.baseStrokeShader().modify({
           'Inputs getPixelInputs': `(Inputs inputs) {
@@ -175,7 +175,7 @@ visualSuite('WebGL', function() {
         });
 
         p5.strokeShader(strokeshader);
-        p5.strokeWeight(30);
+        p5.strokeWeight(15);
         p5.line(
           -p5.width / 3,
           p5.sin(p5.millis() * 0.001) * p5.height / 4,
@@ -188,7 +188,7 @@ visualSuite('WebGL', function() {
     });
 
     visualTest('ImageShader', async (p5, screenshot) => {
-      p5.createCanvas(100, 100, p5.WEBGL);
+      p5.createCanvas(50, 50, p5.WEBGL);
       const img = await new Promise(resolve => p5.loadImage('unit/assets/cat.jpg', resolve));
       const imgShader = p5.createShader(
         `
