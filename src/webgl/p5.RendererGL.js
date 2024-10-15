@@ -566,6 +566,8 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.executeZoom = false;
     this.executeRotateAndMove = false;
 
+    this._drawingFilter = false;
+
     this.specularShader = undefined;
     this.sphereMapping = undefined;
     this.diffusedShader = undefined;
@@ -578,6 +580,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     this.userFillShader = undefined;
     this.userStrokeShader = undefined;
     this.userPointShader = undefined;
+    this.userImageShader = undefined;
 
     // Default drawing is done in Retained Mode
     // Geometry and Material hashes stored here
@@ -1167,6 +1170,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     target.filterCamera._resize();
     this._pInst.setCamera(target.filterCamera);
     this._pInst.resetMatrix();
+    this._drawingFilter = true;
     this._pInst.image(fbo, -target.width / 2, -target.height / 2,
       target.width, target.height);
     this._pInst.clearDepth();
@@ -1636,6 +1640,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
 
     properties.userFillShader = this.userFillShader;
     properties.userStrokeShader = this.userStrokeShader;
+    properties.userImageShader = this.userImageShader;
     properties.userPointShader = this.userPointShader;
 
     properties.pointSize = this.pointSize;
@@ -1710,10 +1715,10 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   _getImmediateStrokeShader() {
     // select the stroke shader to use
     const stroke = this.userStrokeShader;
-    if (!stroke || !stroke.isStrokeShader()) {
-      return this._getLineShader();
+    if (stroke) {
+      return stroke;
     }
-    return stroke;
+    return this._getLineShader();
   }
 
 
@@ -1737,53 +1742,36 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
   }
 
   /*
-   * selects which fill shader should be used based on renderer state,
-   * for use with begin/endShape and immediate vertex mode.
+   * This method will handle both image shaders and
+   * fill shaders, returning the appropriate shader
+   * depending on the current context (image or shape).
    */
-  _getImmediateFillShader() {
-    const fill = this.userFillShader;
-    if (this._useNormalMaterial) {
-      if (!fill || !fill.isNormalShader()) {
-        return this._getNormalShader();
+  _getFillShader() {
+    // If drawing an image, check for user-defined image shader and filters
+    if (this._drawingImage) {
+      // Use user-defined image shader if available and no filter is applied
+      if (this.userImageShader && !this._drawingFilter) {
+        return this.userImageShader;
+      } else {
+        return this._getLightShader(); // Fallback to light shader
       }
     }
-    if (this._enableLighting) {
-      if (!fill || !fill.isLightShader()) {
-        return this._getLightShader();
-      }
-    } else if (this._tex) {
-      if (!fill || !fill.isTextureShader()) {
-        return this._getLightShader();
-      }
-    } else if (!fill /*|| !fill.isColorShader()*/) {
-      return this._getImmediateModeShader();
+    // If user has defined a fill shader, return that
+    else if (this.userFillShader) {
+      return this.userFillShader;
     }
-    return fill;
-  }
-
-  /*
-   * selects which fill shader should be used based on renderer state
-   * for retained mode.
-   */
-  _getRetainedFillShader() {
-    if (this._useNormalMaterial) {
+    // Use normal shader if normal material is active
+    else if (this._useNormalMaterial) {
       return this._getNormalShader();
     }
-
-    const fill = this.userFillShader;
-    if (this._enableLighting) {
-      if (!fill || !fill.isLightShader()) {
-        return this._getLightShader();
-      }
-    } else if (this._tex) {
-      if (!fill || !fill.isTextureShader()) {
-        return this._getLightShader();
-      }
-    } else if (!fill /* || !fill.isColorShader()*/) {
-      return this._getColorShader();
+    // Use light shader if lighting or textures are enabled
+    else if (this._enableLighting || this._tex) {
+      return this._getLightShader();
     }
-    return fill;
+    // Default to color shader if no other conditions are met
+    return this._getColorShader();
   }
+
 
   _getImmediatePointShader() {
     // select the point shader to use
@@ -1942,6 +1930,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     return this._defaultColorShader;
   }
 
+
   /**
    * TODO(dave): un-private this when there is a way to actually override the
    * shader used for points
@@ -2050,6 +2039,7 @@ p5.RendererGL = class RendererGL extends p5.Renderer {
     }
     return this._defaultFontShader;
   }
+
 
   _webGL2CompatibilityPrefix(
     shaderType,

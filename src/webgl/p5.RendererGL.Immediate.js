@@ -137,9 +137,10 @@ p5.RendererGL.prototype.vertex = function(x, y) {
     } else if (
       this.userFillShader !== undefined ||
       this.userStrokeShader !== undefined ||
-      this.userPointShader !== undefined
+      this.userPointShader !== undefined ||
+      this.userImageShader !== undefined
     ) {
-    // Do nothing if user-defined shaders are present
+      // Do nothing if user-defined shaders are present
     } else if (
       this._tex === null &&
       arguments.length >= 4
@@ -214,7 +215,7 @@ p5.RendererGL.prototype.endShape = function(
   if (this.immediateMode.geometry.vertices.length === 3 &&
       this.immediateMode.shapeMode === constants.TESS
   ) {
-    this.immediateMode.shapeMode = constants.TRIANGLES;
+    this.immediateMode.shapeMode === constants.TRIANGLES;
   }
 
   this.isProcessingVertices = true;
@@ -512,8 +513,7 @@ p5.RendererGL.prototype._drawImmediateFill = function(count = 1) {
   this._useVertexColor = (this.immediateMode.geometry.vertexColors.length > 0);
 
   let shader;
-  shader = this._getImmediateFillShader();
-
+  shader = this._getFillShader();
   this._setFillUniforms(shader);
 
   for (const buff of this.immediateMode.buffers.fill) {
@@ -578,5 +578,6 @@ p5.RendererGL.prototype._drawImmediateStroke = function() {
   );
   shader.unbindShader();
 };
+
 
 export default p5.RendererGL;
