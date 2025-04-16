@@ -761,17 +761,15 @@ class Geometry {
    *
    * let myGeometry;
    *
+   * let v0;
+   * let v1;
+   * let v2;
+   * let v3;
    * function setup() {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a p5.Geometry object.
-   *   myGeometry = new p5.Geometry();
-   *
-   *   // Create p5.Vector objects to position the vertices.
-   *   let v0 = createVector(-40, 0, 0);
-   *   let v1 = createVector(0, -40, 0);
-   *   let v2 = createVector(0, 40, 0);
-   *   let v3 = createVector(40, 0, 0);
+   *   myGeometry = buildGeometry(createShape);
    *
    *   // Add the vertices to myGeometry's vertices array.
    *   myGeometry.vertices.push(v0, v1, v2, v3);
@@ -798,6 +796,15 @@ class Geometry {
    *   // Draw the p5.Geometry object.
    *   model(myGeometry);
    * }
+   * 
+   * function createShape() {
+   *   // Create p5.Vector objects to position the vertices.
+   *   v0 = createVector(-40, 0, 0);
+   *   v1 = createVector(0, -40, 0);
+   *   v2 = createVector(0, 40, 0);
+   *   v3 = createVector(40, 0, 0);
+   *  }
+   * 
    * </code>
    * </div>
    *
@@ -1632,9 +1639,8 @@ class Geometry {
    *   createCanvas(100, 100, WEBGL);
    *
    *   // Create a very small torus.
-   *   beginGeometry();
-   *   torus(1, 0.25);
-   *   myGeometry = endGeometry();
+   *   
+   *   myGeometry = buildGeometry(createShape);
    *
    *   // Normalize the torus so its vertices fill
    *   // the range [-100, 100].
@@ -1657,6 +1663,11 @@ class Geometry {
    *
    *   // Draw the torus.
    *   model(myGeometry);
+   * }
+   * 
+   * function createShape() {
+   *  // Create a torus.
+   *  torus(1, 0.25);
    * }
    * </code>
    * </div>

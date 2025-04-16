@@ -1120,17 +1120,14 @@ function font(p5, fn) {
    * - `descriptors` (object) - Optional. An object with
    *    [FontFace descriptors](https://developer.mozilla.org/en-US/docs/Web/API/FontFace/FontFace#parameters).
    *    For example:
-   * The third parameter, `failureCallback`, is also optional. If a function is
-   * passed, it will be called if the font fails to load. The callback function
-   * may use the error
-   * <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" target="_blank">Event</a>
-   * object if needed.
-   *
+   *    ```js
+   *    { weight: 'bold', style: 'italic' }
+   *    ```
    * Fonts can take time to load. Calling `loadFont()` in
-   * <a href="#/p5/preload">preload()</a> ensures fonts load before they're
+   * using async ensures fonts load before they're
    * used in <a href="#/p5/setup">setup()</a> or
    * <a href="#/p5/draw">draw()</a>.
-   *
+   * @method 
    * @param  {...any} args - path, name, onSuccess, onError, descriptors
    * @returns a Promise that resolves with a p5.Font instance
    * @example
