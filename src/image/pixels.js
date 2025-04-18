@@ -270,6 +270,7 @@ function pixels(p5, fn){
    */
   fn.blend = function(...args) {
     // p5._validateParameters('blend', args);
+    console.log("hi");
     if (this._renderer) {
       this._renderer.blend(...args);
     } else {
@@ -343,58 +344,40 @@ function pixels(p5, fn){
    * @param  {Integer} dw
    * @param  {Integer} dh
    */
-  fn.copy = function(...args) {
+  fn.copy = function (...args) {
     // p5._validateParameters('copy', args);
 
     let srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-    if (args.length === 9) {
-      srcImage = args[0];
-      sx = args[1];
-      sy = args[2];
-      sw = args[3];
-      sh = args[4];
-      dx = args[5];
-      dy = args[6];
-      dw = args[7];
-      dh = args[8];
-    } else if (args.length === 8) {
+
+    if (args.length === 9) {          // copy(src, sx, sy, sw, sh, dx, dy, dw, dh)
+      [srcImage, sx, sy, sw, sh, dx, dy, dw, dh] = args;
+    } else if (args.length === 8) {   // copy(sx, sy, sw, sh, dx, dy, dw, dh)   (src = this)
       srcImage = this;
-      sx = args[0];
-      sy = args[1];
-      sw = args[2];
-      sh = args[3];
-      dx = args[4];
-      dy = args[5];
-      dw = args[6];
-      dh = args[7];
+      [sx, sy, sw, sh, dx, dy, dw, dh] = args;
     } else {
       throw new Error('Signature not supported');
     }
 
-    fn._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+    /* FIX: call the helper through `this`, which _is_ in scope */
+    this._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
   };
 
+  /* helper stays on the prototype so it’s reachable via `this._copyHelper` */
   fn._copyHelper = (
     dstImage,
     srcImage,
-    sx,
-    sy,
-    sw,
-    sh,
-    dx,
-    dy,
-    dw,
-    dh
+    sx, sy, sw, sh,
+    dx, dy, dw, dh
   ) => {
     const s = srcImage.canvas.width / srcImage.width;
-    // adjust coord system for 3D when renderer
-    // ie top-left = -width/2, -height/2
-    let sxMod = 0;
-    let syMod = 0;
+
+    // adjust coord system for 3D when renderer (top‑left = −w/2, −h/2)
+    let sxMod = 0, syMod = 0;
     if (srcImage._renderer && srcImage._renderer.isP3D) {
       sxMod = srcImage.width / 2;
       syMod = srcImage.height / 2;
     }
+
     if (dstImage._renderer && dstImage._renderer.isP3D) {
       dstImage.push();
       dstImage.resetMatrix();
@@ -403,27 +386,16 @@ function pixels(p5, fn){
       dstImage.imageMode(dstImage.CORNER);
       dstImage._renderer.image(
         srcImage,
-        sx + sxMod,
-        sy + syMod,
-        sw,
-        sh,
-        dx,
-        dy,
-        dw,
-        dh
+        sx + sxMod, sy + syMod, sw, sh,
+        dx, dy, dw, dh
       );
       dstImage.pop();
     } else {
       dstImage.drawingContext.drawImage(
         srcImage.canvas,
-        s * (sx + sxMod),
-        s * (sy + syMod),
-        s * sw,
-        s * sh,
-        dx,
-        dy,
-        dw,
-        dh
+        s * (sx + sxMod),  s * (sy + syMod),
+        s * sw,            s * sh,
+        dx, dy, dw, dh
       );
     }
   };
