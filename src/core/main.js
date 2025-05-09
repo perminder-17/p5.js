@@ -14,10 +14,9 @@ import * as constants from './constants';
  * a p5 sketch.  It expects an incoming sketch closure and it can also
  * take an optional node parameter for attaching the generated p5 canvas
  * to a node.  The sketch closure takes the newly created p5 instance as
- * its sole argument and may optionally set an asynchronous function
- * using `async/await`, along with the standard <a href="#/p5/setup">setup()</a>,
- *  and/or <a href="#/p5/setup">setup()</a>, and/or <a href="#/p5/draw">draw()</a>
- *  properties on it for running a sketch.
+ * its sole argument and may optionally set <a href="#/p5/preload">preload()</a>,
+ * <a href="#/p5/setup">setup()</a>, and/or
+ * <a href="#/p5/draw">draw()</a> properties on it for running a sketch.
  *
  * A p5 sketch can run in "global" or "instance" mode:
  * "global"   - all properties and methods are attached to the window
@@ -463,10 +462,14 @@ for (const k in constants) {
  * ```
  *
  * Code placed in `setup()` will run once before code placed in
- * <a href="#/p5/draw">draw()</a> begins looping. If the
- * <a href="#/p5/preload">preload()</a> is declared, then `setup()` will
- * run immediately after <a href="#/p5/preload">preload()</a> finishes
- * 
+ * <a href="#/p5/draw">draw()</a> begins looping.
+ * If `setup()` is declared `async` (e.g. `async function setup()`),
+ * execution pauses at each `await` until its promise resolves.
+ * For example, `font = await loadFont(...)` waits for the font asset
+ * to load because `loadFont()` function returns a promise, and the await 
+ * keyword means the program will wait for the promise to resolve.
+ * This ensures that all assets are fully loaded before the sketch continues.
+
  * 
  * loading assets.
  *
@@ -538,7 +541,6 @@ for (const k in constants) {
  * </code>
  * </div>
  */
-
 /**
  * A function that's called repeatedly while the sketch runs.
  *

@@ -17,7 +17,7 @@ export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
 /**
  * The default, two-dimensional renderer in p5.js.
  *
- * Use this when calling {@link p5.createCanvas|createCanvas} (for example,
+ * Use this when calling <a href="#/p5/createCanvas"> (for example,
  * `createCanvas(400, 400, P2D)`) to specify a 2D context.
  *
  * @typedef {'p2d'} P2D
