@@ -26,7 +26,19 @@ export const VERSION = 'VERSION_WILL_BE_REPLACED_BY_BUILD';
  */
 export const P2D = 'p2d';
 
+/**
+ * A high-dynamic-range (HDR) variant of the default, two-dimensional renderer.
+ *
+ * When available, this mode can allow for extended color ranges and more
+ * dynamic color representation. Use it similarly to `P2D`:
+ * `createCanvas(400, 400, P2DHDR)`.
+ *
+ * @typedef {'p2d-hdr'} P2DHDR
+ * @property {P2DHDR} P2DHDR
+ * @final
+ */
 
+export const P2DHDR = 'p2d-hdr';
 
 /**
  * One of the two render modes in p5.js, used for computationally intensive tasks like 3D rendering and shaders.
