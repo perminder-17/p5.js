@@ -241,7 +241,6 @@ function keyboard(p5, fn){
    * ```
    * 
    *
-   * <h3>p5.js 1.x → 2.x keyboard variable changes</h3>
    * <p>The table below summarizes how the main keyboard-related system variables changed between p5.js 1.x and 2.x.</p>
    * <table>
    *   <thead>
