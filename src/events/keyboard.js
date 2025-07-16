@@ -253,13 +253,13 @@ function keyboard(p5, fn){
    *   <tbody>
    *     <tr>
    *       <td><code>key</code></td>
-   *       <td>Text string for most non-printable keys (e.g., <code>"ArrowUp"</code>). Printable key behavior varied by browser/layout.</td>
-   *       <td>Text string of the actual character <em>or</em> key label (e.g., <code>"ArrowUp"</code>, <code>"f"</code> or <code>"F"</code>).</td>
+   *       <td>Text string (e.g., <code>"ArrowUp"</code>).</td>
+   *       <td>Text string (e.g., <code>"ArrowUp"</code>, <code>"f"</code> or <code>"F"</code>).</td>
    *     </tr>
    *     <tr>
    *       <td><code>code</code></td>
    *       <td><em>Not supported.</em></td>
-   *       <td>Physical key string from <code>KeyboardEvent.code</code> (e.g., <code>"ArrowUp"</code>, <code>"KeyF"</code>).</td>
+   *       <td>Text String (e.g., <code>"ArrowUp"</code>, <code>"KeyF"</code>).</td>
    *     </tr>
    *     <tr>
    *       <td><code>keyCode</code></td>
@@ -268,8 +268,8 @@ function keyboard(p5, fn){
    *     </tr>
    *     <tr>
    *       <td>System variables (<code>BACKSPACE</code>, <code>UP_ARROW</code>, …)</td>
-   *       <td>Numeric key codes.</td>
-   *       <td>String values matching the key label (e.g., <code>"ArrowUp"</code>).</td>
+   *       <td>Number</td>
+   *       <td>Text String (e.g., <code>"ArrowUp"</code>).</td>
    *     </tr>
    *   </tbody>
    * </table>
