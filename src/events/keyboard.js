@@ -240,13 +240,16 @@ function keyboard(p5, fn){
    * }
    * ```
    * 
-   * | variable | p5.js 1.x | p5.js 2.x |
-   * |--|--|--|
-   * | `key` | Text String (e.g.: "ArrowUp") | Text String (e.g.: "ArrowUp", "f" or "F") |
-   * | `code` | Not supported | Text String (e.g.: "ArrowUp", "KeyF")  |
-   * | `keyCode` | Number | Number (e.g., 70) |
-   * |  System variables | Number | Text String (e.g: "ArrowUp") | 
-   * 
+   * The table below summarizes how the main keyboard-related system variables changed between
+   * p5.js 1.x and 2.x.
+   *
+   * | Variable | p5.js 1.x type/value | p5.js 2.x type/value |
+   * |---|---|---|
+   * | `key` | Text string for most non-printable keys (e.g., `"ArrowUp"`). Printable key behavior varied by browser/layout. | Text string of the actual character *or* key label (e.g., `"ArrowUp"`, `"f"` or `"F"`). |
+   * | `code` | *Not supported.* | Physical key string from `KeyboardEvent.code` (e.g., `"ArrowUp"`, `"KeyF"`). |
+   * | `keyCode` | Number (e.g., `70`). | Number (unchanged; e.g., `70`). |
+   * | System variables (`BACKSPACE`, `UP_ARROW`, …) | Numeric key codes. | String values matching the key label (e.g., `"ArrowUp"`). |
+   *
    * 
    * @property {String} code
    * @readOnly
