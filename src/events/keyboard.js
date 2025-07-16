@@ -240,17 +240,42 @@ function keyboard(p5, fn){
    * }
    * ```
    * 
-   * The table below summarizes how the main keyboard-related system variables changed between
-   * p5.js 1.x and 2.x.
    *
-   * | Variable | p5.js 1.x type/value | p5.js 2.x type/value |
-   * |---|---|---|
-   * | `key` | Text string for most non-printable keys (e.g., `"ArrowUp"`). Printable key behavior varied by browser/layout. | Text string of the actual character *or* key label (e.g., `"ArrowUp"`, `"f"` or `"F"`). |
-   * | `code` | *Not supported.* | Physical key string from `KeyboardEvent.code` (e.g., `"ArrowUp"`, `"KeyF"`). |
-   * | `keyCode` | Number (e.g., `70`). | Number (unchanged; e.g., `70`). |
-   * | System variables (`BACKSPACE`, `UP_ARROW`, …) | Numeric key codes. | String values matching the key label (e.g., `"ArrowUp"`). |
+   * <h3>p5.js 1.x → 2.x keyboard variable changes</h3>
+   * <p>The table below summarizes how the main keyboard-related system variables changed between p5.js 1.x and 2.x.</p>
+   * <table>
+   *   <thead>
+   *     <tr>
+   *       <th>Variable</th>
+   *       <th>p5.js 1.x type/value</th>
+   *       <th>p5.js 2.x type/value</th>
+   *     </tr>
+   *   </thead>
+   *   <tbody>
+   *     <tr>
+   *       <td><code>key</code></td>
+   *       <td>Text string for most non-printable keys (e.g., <code>"ArrowUp"</code>). Printable key behavior varied by browser/layout.</td>
+   *       <td>Text string of the actual character <em>or</em> key label (e.g., <code>"ArrowUp"</code>, <code>"f"</code> or <code>"F"</code>).</td>
+   *     </tr>
+   *     <tr>
+   *       <td><code>code</code></td>
+   *       <td><em>Not supported.</em></td>
+   *       <td>Physical key string from <code>KeyboardEvent.code</code> (e.g., <code>"ArrowUp"</code>, <code>"KeyF"</code>).</td>
+   *     </tr>
+   *     <tr>
+   *       <td><code>keyCode</code></td>
+   *       <td>Number (e.g., <code>70</code>).</td>
+   *       <td>Number (unchanged; e.g., <code>70</code>).</td>
+   *     </tr>
+   *     <tr>
+   *       <td>System variables (<code>BACKSPACE</code>, <code>UP_ARROW</code>, …)</td>
+   *       <td>Numeric key codes.</td>
+   *       <td>String values matching the key label (e.g., <code>"ArrowUp"</code>).</td>
+   *     </tr>
+   *   </tbody>
+   * </table>
    *
-   * 
+   *
    * @property {String} code
    * @readOnly
    *
