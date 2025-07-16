@@ -240,6 +240,12 @@ function keyboard(p5, fn){
    * }
    * ```
    * 
+   * | variable | p5.js 1.x | p5.js 2.x |
+   * |--|--|--|
+   * | `key` | Text String (e.g.: "ArrowUp") | Text String (e.g.: "ArrowUp", "f" or "F") |
+   * | `code` | Not supported | Text String (e.g.: "ArrowUp", "KeyF")  |
+   * | `keyCode` | Number | Number (e.g., 70) |
+   * |  System variables | Number | Text String (e.g: "ArrowUp") | 
    * 
    * 
    * @property {String} code
