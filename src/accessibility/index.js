@@ -3,6 +3,7 @@ import gridOutput from './gridOutput.js';
 import textOutput from './textOutput.js';
 import outputs from './outputs.js';
 import colorNamer from './color_namer.js';
+import canvasNavigation from './canvasNavigation.js';
 
 export default function (p5) {
   p5.registerAddon(describe);
@@ -10,4 +11,5 @@ export default function (p5) {
   p5.registerAddon(textOutput);
   p5.registerAddon(outputs);
   p5.registerAddon(colorNamer);
+  p5.registerAddon(canvasNavigation);
 }

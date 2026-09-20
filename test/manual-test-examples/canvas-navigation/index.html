@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Canvas navigation - manual test</title>
+
+  <script src="../../../lib/p5.js"></script>
+  <script>
+    // Falls back to a published build so the page still loads without
+    // npm run build - but canvasNavigation() only exists in the local build.
+    if (typeof window.p5 === 'undefined') {
+      document.write(
+        '<script src="https://cdn.jsdelivr.net/npm/p5@2.3.1/lib/p5.min.js"><\/script>'
+      );
+    }
+  </script>
+
+  <style>
+    :root {
+      --ink: #1d1726;
+      --muted: #6d6480;
+      --rule: #ddd6e6;
+      --surface: #fff;
+      --ground: #f7f4fa;
+      --accent: #c9145a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font: 15px/1.6 system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 32px 24px 80px;
+      background: var(--ground);
+      color: var(--ink);
+    }
+
+    .wrap { max-width: 1180px; margin: 0 auto; }
+
+    h1 { font-size: 22px; margin: 0 0 6px; letter-spacing: -0.01em; }
+
+    .sub { color: var(--muted); margin: 0 0 24px; max-width: 62ch; }
+
+    :focus-visible {
+      outline: 3px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 3px;
+    }
+
+    .tabprobe {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin: 14px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .tabprobe button {
+      font: inherit;
+      padding: 6px 14px;
+      border: 1px solid var(--rule);
+      background: var(--surface);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .cols {
+      display: grid;
+      grid-template-columns: minmax(0, 720px) minmax(280px, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 1080px) {
+      .cols { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    canvas {
+      display: block;
+      border-radius: 10px;
+      border: 1px solid var(--rule);
+      max-width: 100%;
+      height: auto;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+
+    .panel h2 {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 10px;
+      font-weight: 600;
+    }
+
+    .log {
+      font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
+      max-height: 260px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 4px;
+    }
+
+    .log div {
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: #f4f0f8;
+      border-left: 3px solid var(--rule);
+    }
+
+    .log div.lvl0 { border-left-color: #888; color: var(--muted); }
+    .log div.lvl1 { border-left-color: var(--accent); }
+    .log div.lvl2 { border-left-color: #7b5ea7; margin-left: 14px; }
+    .log div.lvl3 { border-left-color: #b9aecd; margin-left: 28px; }
+
+    .probe {
+      font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: var(--muted);
+    }
+    .probe b { color: #1f7a52; }
+    .probe i { color: #a8341f; font-style: normal; }
+
+    .keys {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 4px 12px;
+      font-size: 13px;
+      align-items: baseline;
+    }
+
+    kbd {
+      font: 12px ui-monospace, Menlo, monospace;
+      border: 1px solid var(--rule);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 1px 6px;
+      background: var(--ground);
+      white-space: nowrap;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .controls button {
+      font: 12.5px system-ui, sans-serif;
+      padding: 6px 12px;
+      border: 1px solid var(--rule);
+      background: var(--ground);
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .controls button[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .note {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 10px 0 0;
+    }
+
+    main { margin: 0; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>Canvas navigation</h1>
+    <p class="sub">
+      One tab stop for the whole canvas, arrow keys inside it, Escape to leave.
+      Turn on a screen reader and Tab into the sketch, or watch the log on the
+      right to see what it would say.
+    </p>
+
+    <div class="tabprobe">
+      <button type="button">before the canvas</button>
+      <span>&larr; Tab from here. The canvas is the next stop, and the button below is the one after that.</span>
+    </div>
+
+    <div class="cols">
+      <div>
+        <main></main>
+
+        <div class="tabprobe">
+          <button type="button">after the canvas</button>
+          <span>&larr; one Tab away, however many items the sketch drew.</span>
+        </div>
+
+        <div class="panel">
+          <h2>Controls</h2>
+          <div class="controls">
+            <button type="button" data-act="order" data-val="draw" aria-pressed="true">order: draw</button>
+            <button type="button" data-act="order" data-val="spatial" aria-pressed="false">order: spatial</button>
+            <button type="button" data-act="crowd" aria-pressed="false">add 400 points</button>
+            <button type="button" data-act="budget" aria-pressed="true">node budget: 50</button>
+            <button type="button" data-act="ring" aria-pressed="true">focus ring</button>
+            <button type="button" data-act="loop" aria-pressed="true">animating</button>
+          </div>
+          <p class="note">
+            Turn on <em>add 400 points</em> and arrow to the end of the list: the
+            tree stops enumerating and gives one summary item instead. Turn off
+            <em>animating</em> to confirm the tree and the ring still work with
+            no draw loop running.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel">
+          <h2>Keys</h2>
+          <div class="keys">
+            <kbd>Tab</kbd><span>reach the canvas, or leave it</span>
+            <kbd>&darr;</kbd><span>next item</span>
+            <kbd>&uarr;</kbd><span>previous item, or back to the summary</span>
+            <kbd>&rarr;</kbd><span>open an item for detail, or step into a group</span>
+            <kbd>&larr;</kbd><span>close an item, or go back to its group</span>
+            <kbd>Enter</kbd><span>press a button drawn on the canvas</span>
+            <kbd>Esc</kbd><span>back to the summary</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>What a screen reader says</h2>
+          <div class="log" id="log"></div>
+          <p class="note" id="idle">Nothing yet. The canvas stays silent until it is asked.</p>
+        </div>
+
+        <div class="panel">
+          <h2>Focus probe</h2>
+          <p class="probe" id="probe">idle</p>
+          <p class="note">
+            Reads <code>document.activeElement</code> live. If it names an item
+            inside the canvas, this browser puts canvas fallback content in the
+            focus order. If it stays on the canvas itself, navigation still
+            works through <code>aria-activedescendant</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="sketch.js"></script>
+  <script>
+    // logEl, not log: p5 also has a log() function.
+    const logEl = document.getElementById('log');
+    const idle = document.getElementById('idle');
+    const probe = document.getElementById('probe');
+
+    // Named logLine, not line: a top level function declaration would collide
+    // with p5's global mode, which defines line() on window.
+    function logLine(text, level) {
+      idle.hidden = true;
+      const el = document.createElement('div');
+      el.className = 'lvl' + Math.min(level, 3);
+      el.textContent = text;
+      logEl.prepend(el);
+      while (logEl.children.length > 40) logEl.lastChild.remove();
+    }
+
+    // The sketch dispatches this whenever the reader moves. Nothing is
+    // dispatched on its own, however fast the canvas is redrawing.
+    document.addEventListener('p5navigate', ev => {
+      const d = ev.detail;
+      let text = d.spoken;
+      if (d.level > 0 && d.expanded) text += ', expanded';
+      logLine(text, d.level);
+    });
+
+    function updateProbe() {
+      const a = document.activeElement;
+      const canvas = document.querySelector('main canvas');
+      probe.textContent = '';
+      probe.append('activeElement: ');
+      const tag = document.createElement(
+        a && canvas && canvas.contains(a) && a !== canvas ? 'b' : 'i'
+      );
+      if (!canvas) {
+        tag.textContent = 'no canvas yet';
+      } else if (a === canvas) {
+        tag.textContent = 'the canvas itself (summary level)';
+      } else if (canvas.contains(a)) {
+        tag.textContent = a.id + ' - fallback content is focusable here';
+      } else {
+        tag.textContent = 'outside the canvas';
+      }
+      probe.append(tag);
+    }
+
+    document.addEventListener('focusin', updateProbe);
+    document.addEventListener('focusout', () => setTimeout(updateProbe, 0));
+    updateProbe();
+
+    const state = { crowd: false, budget: true, ring: true, loop: true };
+
+    document.querySelectorAll('.controls button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const act = btn.dataset.act;
+        if (act === 'order') {
+          document
+            .querySelectorAll('[data-act="order"]')
+            .forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+          window.demo.setOrder(btn.dataset.val);
+          return;
+        }
+        if (act === 'crowd') {
+          state.crowd = !state.crowd;
+          window.demo.toggleCrowd(state.crowd);
+        } else if (act === 'budget') {
+          state.budget = !state.budget;
+          window.demo.setBudget(state.budget ? 50 : 0);
+          btn.textContent = state.budget ? 'node budget: 50' : 'node budget: off';
+        } else if (act === 'ring') {
+          state.ring = !state.ring;
+          window.demo.setRing(state.ring);
+        } else if (act === 'loop') {
+          state.loop = !state.loop;
+          window.demo.toggleLoop(state.loop);
+          btn.textContent = state.loop ? 'animating' : 'paused';
+        }
+        btn.setAttribute('aria-pressed', String(state[act]));
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Flash detection - GPU vs 2D benchmark</title>
+  <script type="module" src="benchmark.js"></script>
+  <style>
+    body {
+      font: 14px/1.5 system-ui, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #1a1a1a;
+      color: #ddd;
+    }
+
+    h1 {
+      font-size: 17px;
+      margin: 0 0 4px;
+    }
+
+    p {
+      color: #888;
+      margin: 0 0 16px;
+    }
+
+    button {
+      font: inherit;
+      padding: 6px 14px;
+      background: #2f3a2f;
+      color: #ddd;
+      border: 1px solid #4a5a4a;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    pre {
+      margin-top: 20px;
+      font: 12px/1.45 ui-monospace, monospace;
+      white-space: pre;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Flash detection &mdash; GPU shader pyramid vs 2D downscale</h1>
+  <p>
+    Compares the shader approach (per-pixel comparison, then a sum-reduction
+    pyramid) against the plain 2D canvas approach.
+  </p>
+  <button id="run">Run benchmark</button>
+  <pre id="out"></pre>
+</body>
+
+</html>

@@ -697,6 +697,25 @@ function colorNamer(p5, fn) {
           break;
         }
       }
+      //the lookup table does not cover every rounded combination, and a
+      //description that reads "undefined rectangle" is worse than one that
+      //names the closest color it does know
+      if (colortext === undefined) {
+        let best = Infinity;
+        for (let i = 0; i < colorLookUp.length; i++) {
+          //hue wraps, so measure the shorter way round the wheel
+          let dh = Math.abs(colorLookUp[i].h - hsb[0]);
+          if (dh > 5) dh = 10 - dh;
+          const d =
+            dh * dh +
+            Math.pow((colorLookUp[i].s - hsb[1]) * 10, 2) +
+            Math.pow((colorLookUp[i].b - hsb[2]) * 10, 2);
+          if (d < best) {
+            best = d;
+            colortext = colorLookUp[i].name;
+          }
+        }
+      }
     }
     return colortext;
   }

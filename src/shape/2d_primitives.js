@@ -317,7 +317,7 @@ function primitives(p5, fn) {
       );
 
       //accessible Outputs
-      if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+      if (this._accsActive?.()) {
         this._accsOutput('arc', [
           vals.x,
           vals.y,
@@ -499,7 +499,7 @@ function primitives(p5, fn) {
     this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX]);
 
     //accessible Outputs
-    if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+    if (this._accsActive?.()) {
       this._accsOutput('ellipse', [vals.x, vals.y, vals.w, vals.h]);
     }
 
@@ -637,7 +637,7 @@ function primitives(p5, fn) {
     }
 
     //accessible Outputs
-    if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+    if (this._accsActive?.()) {
       this._accsOutput('line', args);
     }
 
@@ -820,7 +820,7 @@ function primitives(p5, fn) {
       } else {
         this._renderer.point(...args);
         //accessible Outputs
-        if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+        if (this._accsActive?.()) {
           this._accsOutput('point', args);
         }
       }
@@ -974,7 +974,7 @@ function primitives(p5, fn) {
       } else {
         this._renderer.quad(...args);
         //accessibile outputs
-        if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+        if (this._accsActive?.()) {
           this._accsOutput('quadrilateral', args);
         }
       }
@@ -1233,7 +1233,7 @@ function primitives(p5, fn) {
       this._renderer.rect(args);
 
       //accessible outputs
-      if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+      if (this._accsActive?.()) {
         this._accsOutput('rectangle', [vals.x, vals.y, vals.w, vals.h]);
       }
     }
@@ -1305,7 +1305,7 @@ function primitives(p5, fn) {
     }
 
     //accessible outputs
-    if (this._accessibleOutputs.grid || this._accessibleOutputs.text) {
+    if (this._accsActive?.()) {
       this._accsOutput('triangle', args);
     }
 

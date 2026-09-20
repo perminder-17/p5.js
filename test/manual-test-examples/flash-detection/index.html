@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>WCAG 2.3.2 flash detection - proof of concept</title>
+
+  <script src="../../../lib/p5.js"></script>
+  <script>
+    // Falls back to the published build so this page works without npm run build.
+    if (typeof window.p5 === 'undefined') {
+      document.write(
+        '<script src="https://cdn.jsdelivr.net/npm/p5@2.3.1/lib/p5.min.js"><\/script>'
+      );
+    }
+  </script>
+  <script type="module" src="sketch.js"></script>
+
+  <style>
+    body {
+      font: 14px/1.5 system-ui, sans-serif;
+      margin: 0;
+      padding: 24px;
+      background: #1a1a1a;
+      color: #ddd;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0 0 4px;
+      width: 100%;
+    }
+
+    h1 small {
+      font-weight: normal;
+      color: #888;
+    }
+
+    h2 {
+      font-size: 15px;
+      margin: 0 0 8px;
+    }
+
+    canvas {
+      display: block;
+      border: 1px solid #444;
+    }
+
+    #side {
+      width: 400px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    td {
+      padding: 3px 0;
+      vertical-align: top;
+    }
+
+    td:last-child {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    tr.rule td {
+      border-top: 1px solid #333;
+      padding-top: 7px;
+    }
+
+    small {
+      color: #777;
+    }
+
+    .ok {
+      color: #4c6;
+    }
+
+    .bad {
+      color: #f55;
+    }
+
+    #modes {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0;
+    }
+
+    #modes li {
+      padding: 5px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #modes li:hover {
+      background: #262626;
+    }
+
+    #modes li.on {
+      background: #2f3a2f;
+    }
+
+    #modes b {
+      display: inline-block;
+      width: 16px;
+      color: #888;
+    }
+
+    #modes em {
+      display: block;
+      margin-left: 16px;
+      color: #777;
+      font-style: normal;
+      font-size: 12px;
+    }
+
+    .tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    #heat {
+      margin-top: 12px;
+      border: 1px solid #444;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>
+    WCAG 2.3.2 flash detection &mdash; proof of concept
+    <small>&nbsp;press 1&ndash;9 to switch pattern, R to reset</small>
+  </h1>
+
+  <div id="stage"></div>
+
+  <div id="side">
+    <div id="hud"></div>
+    <canvas id="heat" width="192" height="144"></canvas>
+    <ul id="modes"></ul>
+  </div>
+</body>
+
+</html>

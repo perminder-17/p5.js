@@ -273,7 +273,27 @@ function outputs(p5, fn) {
         gridLabel: false
       };
     }
-    return this._accessibleOutputs.grid || this._accessibleOutputs.text;
+    //the ingredients object is shared by the outputs and by canvas navigation,
+    //so it has to exist as soon as any of them is switched on
+    if (!this.ingredients) {
+      this.ingredients = {
+        shapes: {},
+        colors: { background: 'white', fill: 'white', stroke: 'black' },
+        pShapes: '',
+        pBackground: ''
+      };
+    }
+    return (
+      this._accessibleOutputs.grid ||
+      this._accessibleOutputs.text ||
+      this._accessibleOutputs.nav
+    );
+  };
+
+  //helper function returns true when any accessibility feature needs the
+  //drawing calls to describe themselves
+  fn._accsActive = function () {
+    return this._addAccsOutput();
   };
 
   //helper function that creates html structure for accessible outputs
